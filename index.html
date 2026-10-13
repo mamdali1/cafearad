@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" id="html-root" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کافه آراد | Arad Cafe</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Vazirmatn for Persian, Playfair Display for English elegance -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            500: '#ec4899', // Primary Pink
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843',
+                        },
+                        dark: {
+                            bg: '#1a1a1a',
+                            surface: '#2d2d2d',
+                            border: '#404040'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'steam': 'steam 4s ease-out infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        steam: {
+                            '0%': { transform: 'translateY(0) scale(1)', opacity: '0.8' },
+                            '100%': { transform: 'translateY(-50px) scale(1.5)', opacity: '0' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom scrollbar for a polished look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdf2f8; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f472b6; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ec4899; 
+        }
+        
+        .dark ::-webkit-scrollbar-track { background: #1a1a1a; }
+        .dark ::-webkit-scrollbar-thumb { background: #db2777; }
+
+        /* Smooth reveal utility class used by JS observer */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Glassmorphism utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass {
+            background: rgba(45, 45, 45, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* SVG Steam Animation */
+        .steam-path {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawSteam 4s linear infinite;
+        }
+        .steam-path-2 {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawSteam 4s linear infinite 1.5s;
+        }
+        .steam-path-3 {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawSteam 4s linear infinite 3s;
+        }
+
+        @keyframes drawSteam {
+            0% { stroke-dashoffset: 100; opacity: 0; transform: translateY(0) scale(1);}
+            20% { opacity: 0.7; }
+            80% { opacity: 0.7; }
+            100% { stroke-dashoffset: 0; opacity: 0; transform: translateY(-30px) scale(1.2);}
+        }
+
+        /* Language Switcher Logic styles */
+        .en-text { display: none; }
+        html[lang="en"] .fa-text { display: none; }
+        html[lang="en"] .en-text { display: inline-block; }
+        html[lang="en"] .en-block { display: block; }
+    </style>
+</head>
+<body class="bg-brand-50 text-gray-800 dark:bg-dark-bg dark:text-gray-200 transition-colors duration-300 font-sans selection:bg-brand-300 selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="scrollToSection('home')">
+                    <i class="fa-solid fa-mug-hot text-brand-500 text-3xl ml-2"></i>
+                    <span class="font-serif font-bold text-2xl text-brand-600 dark:text-brand-400 fa-text">کافه آراد</span>
+                    <span class="font-serif font-bold text-2xl text-brand-600 dark:text-brand-400 en-text" style="display: none;">Arad Cafe</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 rtl:space-x-reverse items-center">
+                    <a href="#home" class="hover:text-brand-500 transition-colors font-medium fa-text">خانه</a>
+                    <a href="#home" class="hover:text-brand-500 transition-colors font-medium en-text">Home</a>
+                    
+                    <a href="#menu" class="hover:text-brand-500 transition-colors font-medium fa-text">منو</a>
+                    <a href="#menu" class="hover:text-brand-500 transition-colors font-medium en-text">Menu</a>
+                    
+                    <a href="#vip" class="hover:text-brand-500 transition-colors font-medium fa-text">خدمات VIP</a>
+                    <a href="#vip" class="hover:text-brand-500 transition-colors font-medium en-text">VIP Services</a>
+                    
+                    <a href="#reservation" class="hover:text-brand-500 transition-colors font-medium fa-text">رزرو</a>
+                    <a href="#reservation" class="hover:text-brand-500 transition-colors font-medium en-text">Reservation</a>
+                    
+                    <a href="#contact" class="hover:text-brand-500 transition-colors font-medium fa-text">تماس با ما</a>
+                    <a href="#contact" class="hover:text-brand-500 transition-colors font-medium en-text">Contact</a>
+
+                    <!-- Controls: Theme & Lang -->
+                    <div class="flex items-center gap-4 border-r pr-4 border-gray-300 dark:border-gray-600">
+                        <button id="themeToggle" class="text-gray-500 hover:text-brand-500 dark:text-gray-400 dark:hover:text-brand-400 transition-colors">
+                            <i class="fa-solid fa-moon text-xl"></i>
+                        </button>
+                        <button id="langToggle" class="font-bold text-brand-600 dark:text-brand-400 hover:text-brand-800 transition-colors">
+                            EN
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center gap-4">
+                    <button id="themeToggleMobile" class="text-gray-500 dark:text-gray-400">
+                        <i class="fa-solid fa-moon text-xl"></i>
+                    </button>
+                    <button id="langToggleMobile" class="font-bold text-brand-600 dark:text-brand-400">
+                        EN
+                    </button>
+                    <button id="mobileMenuBtn" class="text-gray-800 dark:text-gray-200 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobileMenu" class="hidden md:hidden glass border-t border-gray-200 dark:border-gray-700">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col text-center">
+                <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-100 dark:hover:bg-brand-900 fa-text mobile-link">خانه</a>
+                <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-100 dark:hover:bg-brand-900 en-text mobile-link">Home</a>
+                
+                <a href="#menu" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-100 dark:hover:bg-brand-900 fa-text mobile-link">منو</a>
+                <a href="#menu" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-100 dark:hover:bg-brand-900 en-text mobile-link">Menu</a>
+                
+                <a href="#vip" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-100 dark:hover:bg-brand-900 fa-text mobile-link">خدمات VIP</a>
+                <a href="#vip" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-100 dark:hover:bg-brand-900 en-text mobile-link">VIP Services</a>
+                
+                <a href="#reservation" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-100 dark:hover:bg-brand-900 fa-text mobile-link">رزرو</a>
+                <a href="#reservation" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-100 dark:hover:bg-brand-900 en-text mobile-link">Reservation</a>
+                
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-100 dark:hover:bg-brand-900 fa-text mobile-link">تماس با ما</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-100 dark:hover:bg-brand-900 en-text mobile-link">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Abstract Background Shapes -->
+        <div class="absolute top-20 right-10 w-64 h-64 bg-brand-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse-slow"></div>
+        <div class="absolute bottom-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse-slow" style="animation-delay: 1s;"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Text Content -->
+                <div class="text-center lg:text-right rtl:lg:text-right ltr:lg:text-left reveal">
+                    <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight font-serif mb-6">
+                        <span class="fa-text">طعم واقعی آرامش در<br><span class="text-brand-500">کافه آراد</span></span>
+                        <span class="en-text block">Taste Real Tranquility at<br><span class="text-brand-500">Arad Cafe</span></span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0">
+                        <span class="fa-text">فضایی دلنشین با تم صورتی، قهوه‌های تخصصی و دسرهای بی‌نظیر. همین حالا میز خود را رزرو کنید و لحظاتی فراموش‌نشدنی بسازید.</span>
+                        <span class="en-text block">A cozy space with a pink theme, specialty coffees, and unique desserts. Book your table now and create unforgettable moments.</span>
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="#reservation" class="px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-full font-bold shadow-lg hover:shadow-brand-500/50 transition-all duration-300 transform hover:-translate-y-1">
+                            <span class="fa-text">رزرو میز</span>
+                            <span class="en-text">Book a Table</span>
+                        </a>
+                        <a href="#menu" class="px-8 py-4 bg-white dark:bg-dark-surface text-brand-500 border-2 border-brand-500 rounded-full font-bold shadow-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-all duration-300">
+                            <span class="fa-text">مشاهده منو</span>
+                            <span class="en-text">View Menu</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Animated Coffee Cup Graphic -->
+                <div class="relative h-96 flex items-center justify-center reveal animate-float">
+                    <!-- Custom SVG Coffee Cup with animated steam -->
+                    <svg viewBox="0 0 200 250" class="w-64 h-auto drop-shadow-2xl">
+                        <!-- Steam -->
+                        <path class="steam-path" d="M 80 80 Q 90 60 80 40 T 90 10" fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round"/>
+                        <path class="steam-path-2" d="M 100 85 Q 110 65 100 45 T 110 15" fill="none" stroke="#f472b6" stroke-width="3" stroke-linecap="round"/>
+                        <path class="steam-path-3" d="M 120 80 Q 130 60 120 40 T 130 10" fill="none" stroke="#db2777" stroke-width="4" stroke-linecap="round"/>
+                        
+                        <!-- Cup Body -->
+                        <path d="M 40 90 C 40 90, 40 180, 70 190 C 100 200, 140 200, 160 170 C 170 150, 165 90, 165 90 Z" fill="#ffffff" stroke="#fbcfe8" stroke-width="2"/>
+                        <!-- Cup Gradient/Shading (Soft Pink) -->
+                        <path d="M 40 90 C 40 90, 40 180, 70 190 C 100 200, 140 200, 160 170 C 170 150, 165 90, 165 90 Z" fill="url(#cupGradient)" opacity="0.6"/>
+                        
+                        <!-- Cup Handle -->
+                        <path d="M 160 110 C 190 110, 195 150, 160 160" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
+                        <path d="M 160 110 C 190 110, 195 150, 160 160" fill="none" stroke="#fbcfe8" stroke-width="2" stroke-linecap="round"/>
+
+                        <!-- Cup Rim -->
+                        <ellipse cx="102.5" cy="90" rx="62.5" ry="15" fill="#fdf2f8" stroke="#fbcfe8" stroke-width="2"/>
+                        
+                        <!-- Coffee Inside -->
+                        <ellipse cx="102.5" cy="92" rx="55" ry="10" fill="#4a3b32"/>
+                        
+                        <!-- Heart decoration on cup -->
+                        <path d="M 102.5 150 A 10 10 0 0 0 92.5 140 A 10 10 0 0 0 82.5 150 Q 82.5 160 102.5 170 Q 122.5 160 122.5 150 A 10 10 0 0 0 112.5 140 A 10 10 0 0 0 102.5 150 Z" fill="#ec4899"/>
+
+                        <defs>
+                            <linearGradient id="cupGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ffffff"/>
+                                <stop offset="100%" stop-color="#fbcfe8"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    
+                    <!-- Decorative elements around cup -->
+                    <div class="absolute -z-10 w-48 h-48 bg-brand-200 dark:bg-brand-800 rounded-full opacity-50 blur-xl"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wave Transition -->
+        <div class="absolute bottom-0 w-full leading-none z-0">
+            <svg class="block w-full h-16 md:h-24 text-white dark:text-dark-bg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+                <path fill="currentColor" d="M0,192L48,197.3C96,203,192,213,288,197.3C384,181,480,139,576,144C672,149,768,203,864,208C960,213,1056,171,1152,149.3C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-20 bg-white dark:bg-dark-bg relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 dark:text-white mb-4">
+                    <span class="fa-text">منوی ویژه <span class="text-brand-500">آراد</span></span>
+                    <span class="en-text">Special <span class="text-brand-500">Arad</span> Menu</span>
+                </h2>
+                <div class="w-24 h-1 bg-brand-500 mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Category 1: Hot Drinks -->
+                <div class="glass p-6 rounded-3xl shadow-lg border border-brand-100 dark:border-gray-700 reveal hover:-translate-y-2 transition-transform duration-300">
+                    <div class="flex items-center mb-6 text-brand-600 dark:text-brand-400">
+                        <i class="fa-solid fa-mug-hot text-3xl ml-3 mr-3"></i>
+                        <h3 class="text-2xl font-bold font-serif">
+                            <span class="fa-text">نوشیدنی‌های گرم</span>
+                            <span class="en-text">Hot Drinks</span>
+                        </h3>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 fa-text">اسپرسو سینگل</h4>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 en-text">Single Espresso</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 fa-text">تلخ و انرژی‌بخش</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 en-text">Bitter and energizing</p>
+                            </div>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 fa-text">۴۵,۰۰۰ ت</span>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 en-text">$2.50</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 fa-text">لاته آرت صورتی</h4>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 en-text">Pink Art Latte</h4>
+                                <p class="text-sm text-brand-500 fa-text">مخصوص آراد - پرطرفدار</p>
+                                <p class="text-sm text-brand-500 en-text">Arad Special - Popular</p>
+                            </div>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 fa-text">۸۵,۰۰۰ ت</span>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 en-text">$4.50</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 fa-text">کاپوچینو</h4>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 en-text">Cappuccino</h4>
+                            </div>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 fa-text">۷۵,۰۰۰ ت</span>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 en-text">$4.00</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Category 2: Cold Drinks -->
+                <div class="glass p-6 rounded-3xl shadow-lg border border-brand-100 dark:border-gray-700 reveal hover:-translate-y-2 transition-transform duration-300" style="transition-delay: 100ms;">
+                    <div class="flex items-center mb-6 text-brand-600 dark:text-brand-400">
+                        <i class="fa-solid fa-martini-glass text-3xl ml-3 mr-3"></i>
+                        <h3 class="text-2xl font-bold font-serif">
+                            <span class="fa-text">نوشیدنی‌های سرد</span>
+                            <span class="en-text">Cold Drinks</span>
+                        </h3>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 fa-text">آیس کارامل ماکیاتو</h4>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 en-text">Iced Caramel Macchiato</h4>
+                            </div>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 fa-text">۹۵,۰۰۰ ت</span>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 en-text">$5.00</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 fa-text">موهیتو توت‌فرنگی</h4>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 en-text">Strawberry Mojito</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 fa-text">تازه و خنک</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 en-text">Fresh and cool</p>
+                            </div>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 fa-text">۸۰,۰۰۰ ت</span>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 en-text">$4.20</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 fa-text">شیک نوتلا</h4>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 en-text">Nutella Shake</h4>
+                            </div>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 fa-text">۱۱۰,۰۰۰ ت</span>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 en-text">$6.00</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Category 3: Desserts -->
+                <div class="glass p-6 rounded-3xl shadow-lg border border-brand-100 dark:border-gray-700 reveal hover:-translate-y-2 transition-transform duration-300" style="transition-delay: 200ms;">
+                    <div class="flex items-center mb-6 text-brand-600 dark:text-brand-400">
+                        <i class="fa-solid fa-cake-candles text-3xl ml-3 mr-3"></i>
+                        <h3 class="text-2xl font-bold font-serif">
+                            <span class="fa-text">کیک و دسر</span>
+                            <span class="en-text">Cakes & Desserts</span>
+                        </h3>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 fa-text">چیزکیک ردولوت</h4>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 en-text">Red Velvet Cheesecake</h4>
+                                <p class="text-sm text-brand-500 fa-text">پیشنهاد سرآشپز</p>
+                                <p class="text-sm text-brand-500 en-text">Chef's recommendation</p>
+                            </div>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 fa-text">۹۰,۰۰۰ ت</span>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 en-text">$4.80</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 fa-text">کیک شکلاتی خیس</h4>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 en-text">Wet Chocolate Cake</h4>
+                            </div>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 fa-text">۸۵,۰۰۰ ت</span>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 en-text">$4.50</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 fa-text">ماکارون (۳ عدد)</h4>
+                                <h4 class="font-bold text-gray-800 dark:text-gray-200 en-text">Macarons (3 pcs)</h4>
+                            </div>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 fa-text">۶۰,۰۰۰ ت</span>
+                            <span class="font-bold text-brand-600 dark:text-brand-400 en-text">$3.50</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VIP Services & Subscription -->
+    <section id="vip" class="py-20 bg-brand-50 dark:bg-dark-surface relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- VIP Features -->
+                <div class="reveal">
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 dark:text-white mb-6">
+                        <span class="fa-text">خدمات <span class="text-brand-500">وی‌آی‌پی</span> آراد</span>
+                        <span class="en-text">Arad <span class="text-brand-500">VIP</span> Services</span>
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-300 mb-8 fa-text">ما در کافه آراد خدمات ویژه‌ای برای مشتریان خاص خود در نظر گرفته‌ایم تا تجربه‌ای متفاوت داشته باشید.</p>
+                    <p class="text-gray-600 dark:text-gray-300 mb-8 en-text block">We have special services for our loyal customers at Arad Cafe to ensure a unique experience.</p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-12 h-12 bg-brand-100 dark:bg-brand-900 rounded-full flex items-center justify-center text-brand-500">
+                                <i class="fa-solid fa-motorcycle text-xl"></i>
+                            </div>
+                            <div class="ml-4 mr-4">
+                                <h4 class="text-xl font-bold text-gray-900 dark:text-white fa-text">ارسال سریع در محل</h4>
+                                <h4 class="text-xl font-bold text-gray-900 dark:text-white en-text">Fast Delivery</h4>
+                                <p class="mt-2 text-gray-600 dark:text-gray-400 fa-text">سفارشات شما با بسته‌بندی ویژه و گرم به دستتان می‌رسد.</p>
+                                <p class="mt-2 text-gray-600 dark:text-gray-400 en-text">Your orders arrive hot and with special packaging.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-12 h-12 bg-brand-100 dark:bg-brand-900 rounded-full flex items-center justify-center text-brand-500">
+                                <i class="fa-solid fa-crown text-xl"></i>
+                            </div>
+                            <div class="ml-4 mr-4">
+                                <h4 class="text-xl font-bold text-gray-900 dark:text-white fa-text">برگزاری تولد و مراسم</h4>
+                                <h4 class="text-xl font-bold text-gray-900 dark:text-white en-text">Events & Birthdays</h4>
+                                <p class="mt-2 text-gray-600 dark:text-gray-400 fa-text">دیزاین اختصاصی میز و کیک سفارشی با تم دلخواه شما.</p>
+                                <p class="mt-2 text-gray-600 dark:text-gray-400 en-text">Custom table design and cake with your preferred theme.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscription Card -->
+                <div class="reveal">
+                    <div class="bg-gradient-to-br from-brand-400 to-brand-600 rounded-3xl p-8 shadow-2xl text-white transform hover:scale-105 transition-transform duration-300 relative overflow-hidden">
+                        <!-- Decorative bg -->
+                        <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10"></div>
+                        <div class="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white opacity-10"></div>
+                        
+                        <div class="text-center relative z-10">
+                            <span class="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-sm text-sm font-semibold mb-4">
+                                <span class="fa-text">پیشنهاد ویژه</span>
+                                <span class="en-text">Special Offer</span>
+                            </span>
+                            <h3 class="text-3xl font-bold font-serif mb-2">
+                                <span class="fa-text">عضویت ماهیانه باشگاه مشتریان</span>
+                                <span class="en-text">Monthly Premium Membership</span>
+                            </h3>
+                            <div class="text-5xl font-extrabold my-6 drop-shadow-md">
+                                20% <span class="text-2xl font-normal fa-text">تخفیف</span><span class="text-2xl font-normal en-text">OFF</span>
+                            </div>
+                            <p class="mb-8 text-brand-100 fa-text">با خرید اشتراک ماهیانه، روی تمامی سفارشات حضوری و بیرون‌بر ۲۰٪ تخفیف بگیرید و از قهوه رایگان در روز تولدتان لذت ببرید.</p>
+                            <p class="mb-8 text-brand-100 en-text block">Get 20% off all dine-in and takeout orders and enjoy a free coffee on your birthday with a monthly subscription.</p>
+                            
+                            <button onclick="handleSubscribe()" class="w-full py-4 bg-white text-brand-600 rounded-xl font-bold text-lg shadow-lg hover:bg-gray-50 transition-colors">
+                                <span class="fa-text">خرید اشتراک</span>
+                                <span class="en-text">Subscribe Now</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation Section -->
+    <section id="reservation" class="py-20 bg-white dark:bg-dark-bg">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 reveal">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 dark:text-white mb-4">
+                    <span class="fa-text">رزرو <span class="text-brand-500">میز</span></span>
+                    <span class="en-text"><span class="text-brand-500">Table</span> Reservation</span>
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 fa-text">برای اطمینان از داشتن فضای دلخواه، میز خود را از قبل رزرو کنید.</p>
+                <p class="text-gray-600 dark:text-gray-400 en-text block">Book your table in advance to ensure you have your preferred spot.</p>
+            </div>
+
+            <div class="glass p-8 rounded-3xl shadow-xl border border-brand-100 dark:border-gray-700 reveal">
+                <form id="reservationForm" onsubmit="handleReservation(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 fa-text">نام و نام خانوادگی</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 en-text">Full Name</label>
+                            <input type="text" required class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all">
+                        </div>
+                        <!-- Phone -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 fa-text">شماره تماس</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 en-text">Phone Number</label>
+                            <input type="tel" required dir="ltr" class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all text-left">
+                        </div>
+                        <!-- Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 fa-text">تاریخ</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 en-text">Date</label>
+                            <input type="date" required class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all">
+                        </div>
+                        <!-- Time -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 fa-text">ساعت</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 en-text">Time</label>
+                            <input type="time" required class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all">
+                        </div>
+                        <!-- Guests -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 fa-text">تعداد نفرات</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 en-text">Number of Guests</label>
+                            <select class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all">
+                                <option value="1">1</option>
+                                <option value="2" selected>2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5+</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-brand-500/50 transition-all duration-300 flex justify-center items-center gap-2">
+                        <i class="fa-regular fa-calendar-check"></i>
+                        <span class="fa-text">ثبت رزرو</span>
+                        <span class="en-text">Confirm Reservation</span>
+                    </button>
+                </form>
+
+                <!-- Success Message (Hidden by default) -->
+                <div id="reservationSuccess" class="hidden mt-6 p-4 bg-green-100 text-green-700 rounded-xl text-center font-medium border border-green-200">
+                    <i class="fa-solid fa-check-circle mr-2 ml-2"></i>
+                    <span class="fa-text">رزرو شما با موفقیت ثبت شد. منتظر دیدار شما هستیم!</span>
+                    <span class="en-text">Your reservation is confirmed. We look forward to seeing you!</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="py-20 bg-brand-50 dark:bg-dark-surface overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 reveal">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 dark:text-white mb-4">
+                    <span class="fa-text">نظرات <span class="text-brand-500">مشتریان</span></span>
+                    <span class="en-text">Customer <span class="text-brand-500">Reviews</span></span>
+                </h2>
+            </div>
+
+            <!-- Simple Carousel/Grid for reviews -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-md border border-gray-100 dark:border-gray-700 reveal relative">
+                    <i class="fa-solid fa-quote-right absolute top-6 right-6 text-brand-200 dark:text-gray-700 text-4xl opacity-50"></i>
+                    <div class="flex text-brand-500 mb-4">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 italic fa-text">"فضای کافه فوق‌العاده زیبا و آرامش‌بخش بود. طعم قهوه و دیزاین دسرها بی‌نظیر بود. حتما دوباره میام."</p>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 italic en-text block">"The cafe's atmosphere was incredibly beautiful and relaxing. The taste of coffee and dessert design were unique. I'll definitely come back."</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-brand-200 rounded-full flex items-center justify-center text-brand-700 font-bold">M</div>
+                        <div class="ml-3 mr-3">
+                            <h5 class="font-bold text-gray-900 dark:text-white fa-text">مریم رضایی</h5>
+                            <h5 class="font-bold text-gray-900 dark:text-white en-text">Maryam R.</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-md border border-gray-100 dark:border-gray-700 reveal relative" style="transition-delay: 100ms;">
+                    <i class="fa-solid fa-quote-right absolute top-6 right-6 text-brand-200 dark:text-gray-700 text-4xl opacity-50"></i>
+                    <div class="flex text-brand-500 mb-4">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 italic fa-text">"تم صورتی کافه خیلی برای عکاسی عالیه! پرسنل هم بسیار خوش‌برخورد بودن و ارسال بیرون‌برشون هم خیلی سریع بود."</p>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 italic en-text block">"The pink theme is perfect for photography! The staff were very friendly and their delivery was super fast."</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-brand-200 rounded-full flex items-center justify-center text-brand-700 font-bold">S</div>
+                        <div class="ml-3 mr-3">
+                            <h5 class="font-bold text-gray-900 dark:text-white fa-text">سارا احمدی</h5>
+                            <h5 class="font-bold text-gray-900 dark:text-white en-text">Sarah A.</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-md border border-gray-100 dark:border-gray-700 reveal relative" style="transition-delay: 200ms;">
+                    <i class="fa-solid fa-quote-right absolute top-6 right-6 text-brand-200 dark:text-gray-700 text-4xl opacity-50"></i>
+                    <div class="flex text-brand-500 mb-4">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 italic fa-text">"اشتراک ماهیانه رو گرفتم و واقعا می‌ارزه. هر روز قبل از کار قهوه‌ام رو می‌گیرم با تخفیف. کیفیت همیشه بالاست."</p>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6 italic en-text block">"Got the monthly subscription and it's totally worth it. I grab my coffee before work every day with a discount. Quality is always high."</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-brand-200 rounded-full flex items-center justify-center text-brand-700 font-bold">A</div>
+                        <div class="ml-3 mr-3">
+                            <h5 class="font-bold text-gray-900 dark:text-white fa-text">علی کریمی</h5>
+                            <h5 class="font-bold text-gray-900 dark:text-white en-text">Ali K.</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white dark:bg-dark-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                
+                <div class="reveal">
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 dark:text-white mb-6">
+                        <span class="fa-text">تماس با <span class="text-brand-500">ما</span></span>
+                        <span class="en-text">Contact <span class="text-brand-500">Us</span></span>
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-8 fa-text">پاسخگوی سوالات، پیشنهادات و انتقادات شما هستیم.</p>
+                    <p class="text-gray-600 dark:text-gray-400 mb-8 en-text block">We are here to answer your questions and hear your feedback.</p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-brand-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-brand-500 border border-brand-100 dark:border-gray-700">
+                                <i class="fa-solid fa-location-dot text-xl"></i>
+                            </div>
+                            <div class="ml-4 mr-4">
+                                <h4 class="font-bold text-gray-900 dark:text-white fa-text">آدرس</h4>
+                                <h4 class="font-bold text-gray-900 dark:text-white en-text">Address</h4>
+                                <p class="text-gray-600 dark:text-gray-400 fa-text">تهران، خیابان ولیعصر، نبش کوچه صورتی، پلاک ۱</p>
+                                <p class="text-gray-600 dark:text-gray-400 en-text">1 Pink Alley, Valiasr St, Tehran</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-brand-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-brand-500 border border-brand-100 dark:border-gray-700">
+                                <i class="fa-solid fa-phone text-xl"></i>
+                            </div>
+                            <div class="ml-4 mr-4">
+                                <h4 class="font-bold text-gray-900 dark:text-white fa-text">تلفن</h4>
+                                <h4 class="font-bold text-gray-900 dark:text-white en-text">Phone</h4>
+                                <p class="text-gray-600 dark:text-gray-400" dir="ltr">021 - 8888 8888</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-brand-50 dark:bg-gray-800 rounded-full flex items-center justify-center text-brand-500 border border-brand-100 dark:border-gray-700">
+                                <i class="fa-regular fa-clock text-xl"></i>
+                            </div>
+                            <div class="ml-4 mr-4">
+                                <h4 class="font-bold text-gray-900 dark:text-white fa-text">ساعات کاری</h4>
+                                <h4 class="font-bold text-gray-900 dark:text-white en-text">Working Hours</h4>
+                                <p class="text-gray-600 dark:text-gray-400 fa-text">هر روز از ۸ صبح تا ۱۱ شب</p>
+                                <p class="text-gray-600 dark:text-gray-400 en-text">Every day 8 AM to 11 PM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Media -->
+                    <div class="mt-8 flex gap-4">
+                        <a href="#" class="w-10 h-10 bg-brand-100 hover:bg-brand-500 hover:text-white dark:bg-gray-800 dark:hover:bg-brand-500 text-brand-500 rounded-full flex items-center justify-center transition-colors">
+                            <i class="fa-brands fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-brand-100 hover:bg-brand-500 hover:text-white dark:bg-gray-800 dark:hover:bg-brand-500 text-brand-500 rounded-full flex items-center justify-center transition-colors">
+                            <i class="fa-brands fa-telegram text-xl"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-brand-100 hover:bg-brand-500 hover:text-white dark:bg-gray-800 dark:hover:bg-brand-500 text-brand-500 rounded-full flex items-center justify-center transition-colors">
+                            <i class="fa-brands fa-whatsapp text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Simple Map Placeholder (Stylized box instead of heavy iframe) -->
+                <div class="reveal rounded-3xl overflow-hidden shadow-lg border border-brand-100 dark:border-gray-700 h-80 bg-brand-50 dark:bg-gray-800 relative flex items-center justify-center">
+                    <div class="absolute inset-0 opacity-20 dark:opacity-10" style="background-image: radial-gradient(#ec4899 1px, transparent 1px); background-size: 20px 20px;"></div>
+                    <div class="text-center relative z-10">
+                        <i class="fa-solid fa-map-location-dot text-6xl text-brand-300 dark:text-brand-700 mb-4"></i>
+                        <p class="font-bold text-gray-600 dark:text-gray-400 fa-text">نقشه گوگل در اینجا قرار می‌گیرد</p>
+                        <p class="font-bold text-gray-600 dark:text-gray-400 en-text block">Google Maps Embed Here</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 border-t-4 border-brand-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center text-brand-400">
+                <i class="fa-solid fa-mug-hot text-2xl ml-2 mr-2"></i>
+                <span class="font-serif font-bold text-xl fa-text">کافه آراد</span>
+                <span class="font-serif font-bold text-xl en-text">Arad Cafe</span>
+            </div>
+            <p class="text-gray-400 text-sm fa-text">© تمامی حقوق برای کافه آراد محفوظ است. طراحی با <i class="fa-solid fa-heart text-brand-500"></i></p>
+            <p class="text-gray-400 text-sm en-text block">© All rights reserved to Arad Cafe. Designed with <i class="fa-solid fa-heart text-brand-500"></i></p>
+        </div>
+    </footer>
+
+    <!-- Custom MessageBox (Replaces alert) -->
+    <div id="messageBox" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-dark-surface p-8 rounded-3xl shadow-2xl max-w-sm w-full transform scale-95 opacity-0 transition-all duration-300" id="messageBoxContent">
+            <div class="text-brand-500 text-5xl text-center mb-4">
+                <i class="fa-regular fa-bell"></i>
+            </div>
+            <h3 class="text-xl font-bold text-center text-gray-900 dark:text-white mb-2" id="messageBoxTitle">پیام</h3>
+            <p class="text-center text-gray-600 dark:text-gray-300 mb-6" id="messageBoxText">متن پیام</p>
+            <button onclick="closeMessageBox()" class="w-full py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-bold transition-colors">
+                باشه / OK
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // 2. Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.replace('py-4', 'py-0'); // Slight padding adjustment if needed
+            } else {
+                navbar.classList.remove('shadow-md');
+            }
+        });
+
+        // 3. Scroll Reveal Animation using Intersection Observer
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    return;
+                } else {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Run once
+                }
+            });
+        }, revealOptions);
+
+        revealElements.forEach(el => {
+            revealOnScroll.observe(el);
+        });
+
+        // 4. Smooth Scrolling (Fallback/Enhancement)
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 5. Theme Toggle (Dark/Light Mode)
+        const htmlRoot = document.getElementById('html-root');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeToggleMobile = document.getElementById('themeToggleMobile');
+        
+        // Check system preference or localStorage
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlRoot.classList.add('dark');
+            updateThemeIcons(true);
+        } else {
+            htmlRoot.classList.remove('dark');
+            updateThemeIcons(false);
+        }
+
+        function toggleTheme() {
+            htmlRoot.classList.toggle('dark');
+            const isDark = htmlRoot.classList.contains('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            updateThemeIcons(isDark);
+        }
+
+        function updateThemeIcons(isDark) {
+            const iconClass = isDark ? 'fa-sun' : 'fa-moon';
+            themeToggle.innerHTML = `<i class="fa-solid ${iconClass} text-xl"></i>`;
+            themeToggleMobile.innerHTML = `<i class="fa-solid ${iconClass} text-xl"></i>`;
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+        themeToggleMobile.addEventListener('click', toggleTheme);
+
+        // 6. Language Toggle (FA/EN)
+        const langToggle = document.getElementById('langToggle');
+        const langToggleMobile = document.getElementById('langToggleMobile');
+        let currentLang = 'fa'; // Default
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'fa' ? 'en' : 'fa';
+            htmlRoot.setAttribute('lang', currentLang);
+            htmlRoot.setAttribute('dir', currentLang === 'fa' ? 'rtl' : 'ltr');
+            
+            // Update button texts
+            const btnText = currentLang === 'fa' ? 'EN' : 'FA';
+            langToggle.textContent = btnText;
+            langToggleMobile.textContent = btnText;
+        }
+
+        langToggle.addEventListener('click', toggleLanguage);
+        langToggleMobile.addEventListener('click', toggleLanguage);
+
+        // 7. Form Submission & MessageBox
+        function handleReservation(e) {
+            e.preventDefault();
+            // Show success message within the form area
+            const successMsg = document.getElementById('reservationSuccess');
+            successMsg.classList.remove('hidden');
+            e.target.reset();
+            
+            // Hide after a few seconds
+            setTimeout(() => {
+                successMsg.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Custom MessageBox logic
+        const msgBox = document.getElementById('messageBox');
+        const msgBoxContent = document.getElementById('messageBoxContent');
+        const msgTitle = document.getElementById('messageBoxTitle');
+        const msgText = document.getElementById('messageBoxText');
+
+        function showMessageBox(titleFa, textFa, titleEn, textEn) {
+            const title = currentLang === 'fa' ? titleFa : titleEn;
+            const text = currentLang === 'fa' ? textFa : textEn;
+            
+            msgTitle.textContent = title;
+            msgText.textContent = text;
+            
+            msgBox.classList.remove('hidden');
+            msgBox.classList.add('flex');
+            // Small delay to allow display:flex to apply before animating opacity/transform
+            setTimeout(() => {
+                msgBoxContent.classList.remove('scale-95', 'opacity-0');
+                msgBoxContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeMessageBox() {
+            msgBoxContent.classList.remove('scale-100', 'opacity-100');
+            msgBoxContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                msgBox.classList.add('hidden');
+                msgBox.classList.remove('flex');
+            }, 300);
+        }
+
+        function handleSubscribe() {
+            showMessageBox(
+                'باشگاه مشتریان',
+                'برای تکمیل ثبت نام و دریافت تخفیف ۲۰ درصدی، لطفا به صندوق کافه مراجعه کنید.',
+                'Premium Membership',
+                'To complete your registration and get the 20% discount, please visit the cafe cashier.'
+            );
+        }
+
+        // Trigger animations on load for elements above the fold
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                revealElements.forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    if(rect.top < window.innerHeight) {
+                        el.classList.add('active');
+                    }
+                });
+            }, 100);
+        });
+    </script>
+</body>
+</html>
